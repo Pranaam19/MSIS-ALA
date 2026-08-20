@@ -122,7 +122,7 @@ class Vec:
 
 
 if sys.version_info < (3, 8):
-    sys.exit("Error: This script requires Python 3.8 or higher.")
+     sys.exit("Error: This script requires Python 3.8 or higher.")
 
 if __name__ == "__main__":
     #z1 = Vec.zeros(10)
