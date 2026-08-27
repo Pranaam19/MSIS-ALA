@@ -3,12 +3,12 @@ from vec import Vec
 
 class TestVec(unittest.TestCase):
     def test_init_and_null(self):
-        v = Vec((1,2,3));
+        v = Vec((1,2,3))
         self.assertEqual(v.elements,(1,2,3))
         self.assertEqual(len(v),3)
 
     def test_zeros(self):
-        z= Vec.zeros(3);
+        z= Vec.zeros(3)
         self.assertEqual(len(z),3)
 
     def test_add(self):
