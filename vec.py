@@ -143,6 +143,10 @@ class Vec:
     # Calculates the Euclidean norm (L2 norm) of the vector.
     # sqrt(e[0]^2 + e[1]^2 + e[2]^2 + ... + e[n-1]^2)
     def norm(self) -> float:
+        '''
+        Calculates the Euclidean norm (L2 norm) of the vector.
+        Raises RuntimeError as this method is currently unimplemented.
+        '''
         raise RuntimeError("norm unimpleented")
     
 
