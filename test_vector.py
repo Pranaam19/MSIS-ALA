@@ -53,6 +53,22 @@ class TestVec(unittest.TestCase):
         v = Vec((1,2,3))
         self.assertAlmostEqual(v.__std__(),0.816496580927726)
     
+    def test_norm(self):
+        v = Vec((3,4))
+        self.assertEqual(v.__norm__(),5.0)
+        
+    def test_word2vec(self):
+        word2vec_model_path = "src/word2vec/glove50/glove_50_fast.wordvectors"
+        model = Vec.load_model(word2vec_model_path)
+        word1 = Vec.__glove_vector__("dance",model)
+        word2 = Vec.__glove_vector__("cake",model)
+        self.assertEqual(len(word1),50)
+        self.assertEqual(len(word2),50)
+        # print(word1.elements[0])
+        # print(model["dance"][0])
+        self.assertEqual(word1.elements[0], model["dance"][0])
+        self.assertEqual(word2.elements[-1], model["cake"][-1])
+    
 
 
 if __name__ == "__main__":
