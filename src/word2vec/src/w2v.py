@@ -60,6 +60,12 @@ def compute_inner_product_raw(model, word1:str, word2:str):
         return round(inner_product, 7)
     return None
 
+def norm_word(model, word:str):
+    v = model[word]
+    norm =0.0
+    for i in range(len(v)):
+        norm += v[i] * v[i]
+    return round(np.sqrt(norm), 7)
 
 def test_similarity_diff_words(model):
     v1 = get_word_vector(model, "india")
@@ -90,7 +96,8 @@ def test_inner_product(model):
 
 def test_most_similar(model, word:str):
     # can we find out if (king - man + woman = queen)?
-    result = model.most_similar(positive=['king', 'woman'], negative=['man'], topn=1)
+    result = model.most_similar(positive=['king', 'woman'], negative=['man'], topn=3)
+    print(result)
     # print(f"vector math: (king - man + woman) = {result[0][0]} (Confidence: {result[0][1]:.4f})")
     assert result[0][0] == 'queen', "Most similar word computation failed."
 
