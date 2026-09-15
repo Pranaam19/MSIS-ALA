@@ -27,3 +27,5 @@ src/linalg/lib
 src/linalg/include
 src/linalg/share
 
+venv/
+src/word2vec/glove50

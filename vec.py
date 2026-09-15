@@ -1,6 +1,9 @@
 
 import sys
+import math
 import random
+import numpy as np
+from gensim.models import KeyedVectors
 from typing import Self
 
 
@@ -15,7 +18,7 @@ class Vec:
         else:
             elements = tuple(src)
             for x in elements:
-                if not isinstance(x, (int, float)):
+                if not isinstance(x, (int, float,np.number)):#np.number becuase it can accept numpy.float64 and numpy.int64 for the case of word2vec glove vectors  
                     raise TypeError(f"Scalar must be a number: {type(x)}")
             self.elements = elements
 
@@ -100,6 +103,40 @@ class Vec:
         self.elements = tuple((round(x + y, 5) for x, y in zip(self.elements, other.elements)))
         # self.elements = new_element
         return self
+    
+    def __mean__(self):
+        if len(self.elements) == 0:
+            raise ValueError("Cannot compute mean of an empty vector.")
+        summ =sum(self.elements) / len(self.elements)
+
+        return summ
+    
+    def __demean__(self):
+        if len(self.elements) == 0:
+            raise ValueError("Cannot demean an empty vector.")
+        mean = self.__mean__()
+        demeaned = Vec(round(x-mean,5) for x in self.elements)
+        return demeaned
+    
+    def __std__(self):
+
+        if len(self.elements) == 0:
+            raise ValueError("Cannot compute standard deviation of an empty vector.")
+        mean = self.__mean__()
+        std = math.sqrt(sum((x - mean) ** 2 for x in self.elements) / len(self.elements))
+        return std
+    
+    def __glove_vector__(self, word:str, model:KeyedVectors):
+        """
+        Retrieves the GloVe vector for a given word from the provided model.
+        Raises KeyError if the word is not found in the model.
+        """
+
+        if word not in model:
+            raise KeyError(f"Word '{word}' not found in the model.")
+        return Vec(model[word])
+    
+
 
     # return a vector of @n zeroes. precondition: @n > 0
     @staticmethod
@@ -132,9 +169,9 @@ class Vec:
         Returns a vector of n uniformly distributed random numbers in the range [0, 1].
         Precondition: n > 0
         '''
-        if(n<0):
+        if(n<=0):
             raise RuntimeError("n is less than 0")
-        random_numbers = (random.random() for _ in range(3))
+        random_numbers = Vec(random.random() for _ in range(n))
         return random_numbers
         
 
@@ -147,8 +184,10 @@ class Vec:
         Calculates the Euclidean norm (L2 norm) of the vector.
         Raises RuntimeError as this method is currently unimplemented.
         '''
-        raise RuntimeError("norm unimpleented")
+        norm = math.sqrt(sum(x ** 2 for x in self.elements))
+        return round(norm, 5)
     
+
 
 """
 (1) Understand the basic design of the vector abstraction. Review the implementation.
@@ -170,6 +209,8 @@ if sys.version_info < (3, 8):
 if __name__ == "__main__":
     #z1 = Vec.zeros(10)
     v1 = Vec((0, 1, 1.03))
+    p = v1.__mean__()
+    assert p == 0.6766666666666666, f"Expected mean: 0.6766666666666666, but got: {p}"
     v2 = Vec((1, 2, 3))
     print(v1)
     v3 = 2.2 * v1
