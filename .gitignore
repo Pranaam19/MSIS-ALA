@@ -26,6 +26,6 @@ src/linalg/bin
 src/linalg/lib
 src/linalg/include
 src/linalg/share
-
+__pycache__/
 venv/
 src/word2vec/glove50

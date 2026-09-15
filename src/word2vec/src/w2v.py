@@ -63,7 +63,7 @@ def compute_inner_product_raw(model, word1:str, word2:str):
 def norm_word(model, word:str):
     v = model[word]
     norm =0.0
-    for i in range(len(v)):
+    for i in range(len(v)): #whole thing can be replace by np.linalg.norm(v)x
         norm += v[i] * v[i]
     return round(np.sqrt(norm), 7)
 
