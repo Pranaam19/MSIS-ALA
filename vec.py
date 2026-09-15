@@ -1,4 +1,4 @@
-
+import os
 import sys
 import math
 import random
@@ -126,7 +126,21 @@ class Vec:
         std = math.sqrt(sum((x - mean) ** 2 for x in self.elements) / len(self.elements))
         return std
     
-    def __glove_vector__(self, word:str, model:KeyedVectors):
+
+    def load_model(model_path:str):
+        """
+        Loads a word2vec model from the specified path.
+        Returns the loaded model or None if loading fails.
+        """
+        try:
+            fast_model_path = os.path.expanduser(model_path)
+            return KeyedVectors.load(fast_model_path, mmap='r')
+        except Exception as e:
+            print(f"Failed to load model in word2vec format: {e}")
+        return None
+    
+    @classmethod
+    def __glove_vector__(cls, word:str, model:KeyedVectors)-> "Vec":
         """
         Retrieves the GloVe vector for a given word from the provided model.
         Raises KeyError if the word is not found in the model.
@@ -134,7 +148,8 @@ class Vec:
 
         if word not in model:
             raise KeyError(f"Word '{word}' not found in the model.")
-        return Vec(model[word])
+        raw_vec = model[word]
+        return cls(raw_vec)
     
 
 
@@ -179,7 +194,7 @@ class Vec:
 
     # Calculates the Euclidean norm (L2 norm) of the vector.
     # sqrt(e[0]^2 + e[1]^2 + e[2]^2 + ... + e[n-1]^2)
-    def norm(self) -> float:
+    def __norm__(self) -> float:
         '''
         Calculates the Euclidean norm (L2 norm) of the vector.
         Raises RuntimeError as this method is currently unimplemented.
@@ -207,25 +222,35 @@ if sys.version_info < (3, 8):
      sys.exit("Error: This script requires Python 3.8 or higher.")
 
 if __name__ == "__main__":
+    word2vec_model_path = "src/word2vec/glove50/glove_50_fast.wordvectors"
     #z1 = Vec.zeros(10)
-    v1 = Vec((0, 1, 1.03))
-    p = v1.__mean__()
-    assert p == 0.6766666666666666, f"Expected mean: 0.6766666666666666, but got: {p}"
-    v2 = Vec((1, 2, 3))
-    print(v1)
-    v3 = 2.2 * v1
-    v3 *= 5
-    v3 = 1 + v3
-    v1 += v3
-    print(v1)
-    print(v3)
-    v2 = v1 + v3
-    print(v1 + v3)
-    v1 *= 5
-    print(v1)
-    v4 =-v1
-    print(v4)
-    o1 = Vec.zeros(3)
-    print(o1)
-    print(v1+v2)
+    # v1 = Vec((0, 1, 1.03))
+    # p = v1.__mean__()
+    # # assert p == 0.6766666666666666, f"Expected mean: 0.6766666666666666, but got: {p}"
+    # v2 = Vec((1, 2, 3))
+    # print(v1)
+    # v3 = 2.2 * v1
+    # v3 *= 5
+    # v3 = 1 + v3
+    # v1 += v3
+    # print(v1)
+    # print(v3)
+    # v2 = v1 + v3
+    # print(v1 + v3)
+    # v1 *= 5
+    # print(v1)
+    # v4 =-v1
+    # print(v4)
+    # o1 = Vec.zeros(3)
+    # print(o1)
+    # print(v1+v2)
     #print(-(v1 + v3))
+    user_word="hello"
+    model = Vec.load_model(word2vec_model_path)
+    word_vector = Vec.__glove_vector__(user_word, model)
+            
+
+    print(f"Vector Dimensions Count : {len(word_vector)}")
+    print(f"Raw Vector Elements:\n{word_vector}\n")
+    vector_norm = word_vector.__norm__()
+    print(f"Vector norm : {vector_norm:.5f}")
